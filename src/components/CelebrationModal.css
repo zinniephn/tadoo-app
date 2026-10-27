@@ -1,0 +1,91 @@
+.celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgb(222 224 218 / 0.8);
+  animation: fade-in 200ms ease;
+}
+
+.celebration__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: min(546px, 100%);
+  padding: clamp(36px, 8vw, 66px) clamp(24px, 6vw, 67px);
+  border-radius: 49px;
+  background: var(--celebrate-bg);
+  box-shadow: 10px 10px 4px 0 rgb(188 184 184 / 0.25);
+  color: var(--celebrate-green);
+  font-family: var(--font-heading);
+  animation: card-in 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.celebration__card--day {
+  width: min(556px, 100%);
+  padding: 36px clamp(24px, 6vw, 48px);
+}
+
+/* Logo with the party popper beside it; the popper sits in a 36px slot as in Figma. */
+.celebration__logo-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.celebration__logo-row > img {
+  margin: 6.4px 2.2px 0 2.3px;
+  animation: wiggle 900ms ease-in-out 300ms 2;
+}
+
+.celebration__message {
+  margin: 0;
+  width: 100%;
+  text-align: left;
+  font-size: clamp(24px, 4vw + 8px, 32px);
+  line-height: 1.2;
+}
+
+.celebration__star {
+  display: inline-block;
+  margin-left: 0.3em;
+  vertical-align: -0.12em;
+}
+
+.celebration__card--day .celebration__star {
+  margin-left: 0;
+}
+
+.celebration__shop {
+  min-width: 200px;
+  height: 64px;
+  padding: 0 32px;
+  border-radius: 32px;
+  background: var(--brand-green);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 28px;
+  transition: transform 150ms ease;
+}
+
+.celebration__shop:hover {
+  transform: scale(1.05);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+
+@keyframes card-in {
+  from { transform: scale(0.6); opacity: 0; }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-15deg); }
+  75% { transform: rotate(15deg); }
+}

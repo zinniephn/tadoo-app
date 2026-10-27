@@ -1,0 +1,11 @@
+.app {
+  max-width: calc(1170px + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: 45px var(--gutter) 64px;
+}
+
+@media (max-width: 600px) {
+  .app {
+    padding-top: 24px;
+  }
+}

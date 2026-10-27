@@ -1,0 +1,80 @@
+.header__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.account {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: 30px;
+  background: var(--account-red);
+  transition: transform 150ms ease;
+}
+
+.account:hover {
+  transform: scale(1.03);
+}
+
+.account:active {
+  transform: scale(0.97);
+}
+
+.account__name {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 1.2;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 14ch;
+}
+
+.header__greeting {
+  margin: 45px 0 0;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-greeting);
+}
+
+/* inline so the star stays next to the last word when the text wraps */
+.header__greeting img {
+  display: inline-block;
+  margin-left: 9px;
+  vertical-align: -3px;
+}
+
+.header__date {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin: 45px 0 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-task);
+  line-height: 1.2;
+}
+
+.header__date img {
+  margin-bottom: 0.08em;
+}
+
+@media (max-width: 600px) {
+  .account {
+    padding: 4px 12px 4px 18px;
+  }
+
+  .account__name {
+    font-size: 22px;
+    max-width: 9ch;
+  }
+
+  .header__greeting,
+  .header__date {
+    margin-top: 28px;
+  }
+}

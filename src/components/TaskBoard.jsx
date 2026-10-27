@@ -1,0 +1,69 @@
+import { PERIODS } from '../state/periods'
+import TaskRow from './TaskRow'
+import AddTaskRow from './AddTaskRow'
+import './TaskBoard.css'
+
+// Morning / Afternoon / Evening tabs with the list for the chosen part of the day.
+export default function TaskBoard({ tasks, activePeriod, onSelectPeriod, onToggle, onRemove, onAdd }) {
+  const period = PERIODS.find((p) => p.id === activePeriod)
+  const list = tasks[activePeriod]
+
+  function handleTabKeys(e) {
+    const step = { ArrowRight: 1, ArrowLeft: -1 }[e.key]
+    if (!step) return
+    const index = PERIODS.findIndex((p) => p.id === activePeriod)
+    const next = PERIODS[(index + step + PERIODS.length) % PERIODS.length]
+    onSelectPeriod(next.id)
+    document.getElementById(`tab-${next.id}`)?.focus()
+  }
+
+  return (
+    <section className="board" aria-label="My Tasks">
+      <div className="board__tabs" role="tablist" aria-label="Part of the day" onKeyDown={handleTabKeys}>
+        {PERIODS.map((p) => {
+          const selected = p.id === activePeriod
+          const all = tasks[p.id]
+          const allDone = all.length > 0 && all.every((t) => t.done)
+          return (
+            <button
+              key={p.id}
+              id={`tab-${p.id}`}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              aria-controls="task-panel"
+              tabIndex={selected ? 0 : -1}
+              className={`board__tab ${selected ? 'board__tab--active' : ''}`}
+              style={{ '--tab-color': p.color }}
+              onClick={() => onSelectPeriod(p.id)}
+            >
+              <span className="board__tab-label">{p.label}</span>
+              <img src={p.icon} alt="" width="36" height="36" />
+              {allDone && <span className="visually-hidden">, all done</span>}
+            </button>
+          )
+        })}
+      </div>
+
+      <div
+        id="task-panel"
+        role="tabpanel"
+        aria-labelledby={`tab-${activePeriod}`}
+        className="board__panel"
+        style={{ '--panel-color': period.color, '--divider': period.divider }}
+      >
+        <ul className="board__list">
+          {list.map((task) => (
+            <TaskRow
+              key={task.id}
+              task={task}
+              onToggle={() => onToggle(activePeriod, task.id)}
+              onRemove={() => onRemove(activePeriod, task.id)}
+            />
+          ))}
+          <AddTaskRow key={activePeriod} periodLabel={period.label} onAdd={(text) => onAdd(activePeriod, text)} />
+        </ul>
+      </div>
+    </section>
+  )
+}
