@@ -1,7 +1,10 @@
 import Logo from './Logo'
 import StarCount from './StarCount'
 import smallStarIcon from '../assets/star-small.svg'
-import calendarIcon from '../assets/calendar.svg'
+import calendarIcon from '../assets/calendar-small.svg'
+import backArrow from '../assets/back-arrow.svg'
+import forwardArrow from '../assets/forward-arrow.svg'
+import { dayAfter } from '../state/useTadoo'
 import './Header.css'
 
 const dateFormat = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'short', day: 'numeric' })
@@ -13,7 +16,9 @@ function formatDay(day) {
 }
 
 // The star screens show only the top row (logo + Account button).
-export default function Header({ name, stars, day, onOpenMenu, topOnly = false }) {
+// viewDay is 'today' or 'tomorrow' (planning ahead); onSwitchDay flips between them.
+export default function Header({ name, stars, day, onOpenMenu, topOnly = false, viewDay = 'today', onSwitchDay }) {
+  const tomorrow = viewDay === 'tomorrow'
   return (
     <header className="header">
       <div className="header__top">
@@ -34,14 +39,32 @@ export default function Header({ name, stars, day, onOpenMenu, topOnly = false }
       {!topOnly && (
         <>
           <p className="header__greeting">
-        Hello {name}! Check all your tasks today to earn more stars!
-        <img src={smallStarIcon} alt="" width="24" height="24" />
-      </p>
+            {tomorrow
+              ? 'Plan your tasks for tomorrow! You can check them when tomorrow comes.'
+              : `Hello ${name}! Check all your tasks today to earn more stars!`}
+            <img src={smallStarIcon} alt="" width="24" height="24" />
+          </p>
 
-      <p className="header__date">
-        <img src={calendarIcon} alt="" width="36" height="36" />
-        Today, {formatDay(day)}
-      </p>
+          <div className="header__date-row">
+            <p className="header__date">
+              <img src={calendarIcon} alt="" width="30" height="30" />
+              {tomorrow ? `Tomorrow, ${formatDay(dayAfter(day))}` : `Today, ${formatDay(day)}`}
+            </p>
+            {/* Figma "Day switch" */}
+            <button type="button" className="day-switch" onClick={onSwitchDay}>
+              {tomorrow ? (
+                <>
+                  <img src={backArrow} alt="" width="28" height="28" />
+                  Today
+                </>
+              ) : (
+                <>
+                  Tomorrow
+                  <img src={forwardArrow} alt="" width="28" height="28" />
+                </>
+              )}
+            </button>
+          </div>
         </>
       )}
     </header>

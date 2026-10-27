@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { useTadoo } from './state/useTadoo'
+import { tomorrowLists, useTadoo } from './state/useTadoo'
 import { PERIODS, periodForHour } from './state/periods'
 import Header from './components/Header'
 import TaskBoard from './components/TaskBoard'
@@ -7,6 +7,7 @@ import NameScreen from './components/NameScreen'
 import CelebrationModal from './components/CelebrationModal'
 import AccountDrawer from './components/AccountDrawer'
 import StarBoard from './components/StarBoard'
+import CopyPanel from './components/CopyPanel'
 import './App.css'
 
 export default function App() {
@@ -17,6 +18,11 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   // 'day' is the task list; 'shop', 'stickers' and 'badges' are the star screens.
   const [screen, setScreen] = useState('day')
+  // On My Day: 'today', or 'tomorrow' while planning ahead.
+  const [viewDay, setViewDay] = useState('today')
+  // The part of the day whose tasks are being copied into tomorrow (or null).
+  const [copying, setCopying] = useState(null)
+  const closeCopy = useCallback(() => setCopying(null), [])
   const closeCelebration = useCallback(() => setCelebration(null), [])
   const closeMenu = useCallback(() => setMenuOpen(false), [])
 
@@ -56,16 +62,20 @@ export default function App() {
         day={state.day}
         onOpenMenu={() => setMenuOpen(true)}
         topOnly={screen !== 'day'}
+        viewDay={viewDay}
+        onSwitchDay={() => setViewDay(viewDay === 'today' ? 'tomorrow' : 'today')}
       />
       <main>
         {screen === 'day' ? (
           <TaskBoard
-            tasks={state.tasks}
+            tasks={viewDay === 'tomorrow' ? tomorrowLists(state) : state.tasks}
+            future={viewDay === 'tomorrow'}
             activePeriod={activePeriod}
             onSelectPeriod={setActivePeriod}
             onToggle={toggle}
-            onRemove={(period, id) => dispatch({ type: 'remove', period, id })}
-            onAdd={(period, text) => dispatch({ type: 'add', period, text })}
+            onRemove={(period, id) => dispatch({ type: 'remove', when: viewDay, period, id })}
+            onAdd={(period, text) => dispatch({ type: 'add', when: viewDay, period, text })}
+            onCopy={setCopying}
           />
         ) : (
           <StarBoard
@@ -77,6 +87,15 @@ export default function App() {
           />
         )}
       </main>
+      {copying && (
+        <CopyPanel
+          periodLabel={PERIODS.find((p) => p.id === copying).label}
+          todayTasks={state.tasks[copying]}
+          tomorrowTasks={tomorrowLists(state)[copying]}
+          onCopy={(ids) => dispatch({ type: 'copyToTomorrow', period: copying, ids })}
+          onClose={closeCopy}
+        />
+      )}
       {menuOpen && (
         <AccountDrawer
           name={state.name}
@@ -85,6 +104,7 @@ export default function App() {
           onGo={(id) => {
             setMenuOpen(false)
             setScreen(id === 'tasks' ? 'day' : id)
+            if (id === 'tasks') setViewDay('today')
           }}
           onEditName={() => {
             setMenuOpen(false)

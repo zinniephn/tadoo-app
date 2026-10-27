@@ -16,6 +16,13 @@ function dayBefore(day) {
   return `${prev.getFullYear()}-${prev.getMonth() + 1}-${prev.getDate()}`
 }
 
+// The "Y-M-D" key of the day after `day`.
+export function dayAfter(day) {
+  const [y, m, d] = day.split('-').map(Number)
+  const next = new Date(y, m - 1, d + 1)
+  return `${next.getFullYear()}-${next.getMonth() + 1}-${next.getDate()}`
+}
+
 function makeId() {
   return crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`
 }
@@ -25,7 +32,7 @@ function starterState() {
   for (const { id } of PERIODS) {
     tasks[id] = STARTER_TASKS[id].map((text) => ({ id: makeId(), text, done: false }))
   }
-  return { name: '', stars: 0, tasks, day: todayKey(), ...starterRewards(0) }
+  return { name: '', stars: 0, tasks, day: todayKey(), plan: null, ...starterRewards(0) }
 }
 
 // owned: sticker ids bought in the Star Shop. badges: earned badge ids.
@@ -34,22 +41,44 @@ function starterRewards(stars) {
   return { owned: [], badges: [], stats: { earned: stars, read: 0, help: 0, streak: 0, lastFullDay: null } }
 }
 
+function emptyLists() {
+  return Object.fromEntries(PERIODS.map(({ id }) => [id, []]))
+}
+
+// `plan` holds the lists made in advance for the day after `day` (or null).
+// Older plans (e.g. made before a skipped day) don't count.
+export function tomorrowLists(state) {
+  return state.plan?.day === dayAfter(state.day) ? state.plan.tasks : emptyLists()
+}
+
 // A new day starts with fresh checkboxes; the star total carries over.
+// Each part of the day uses its planned tasks, or repeats yesterday's when nothing was planned.
 function startNewDayIfNeeded(state) {
   const day = todayKey()
   if (state.day === day) return state
+  const planned = state.plan?.day === day ? state.plan.tasks : emptyLists()
   const tasks = {}
   for (const { id } of PERIODS) {
-    tasks[id] = (state.tasks[id] ?? []).map((t) => ({ ...t, done: false, locked: false }))
+    const list = planned[id]?.length ? planned[id] : (state.tasks[id] ?? [])
+    tasks[id] = list.map((t) => ({ ...t, done: false, locked: false }))
   }
-  return { ...state, tasks, day }
+  return { ...state, tasks, day, plan: null }
+}
+
+// Applies `change` to one part of the day's list, today or tomorrow.
+function updateList(state, when, period, change) {
+  if (when === 'tomorrow') {
+    const lists = tomorrowLists(state)
+    return { ...state, plan: { day: dayAfter(state.day), tasks: { ...lists, [period]: change(lists[period]) } } }
+  }
+  return { ...state, tasks: { ...state.tasks, [period]: change(state.tasks[period]) } }
 }
 
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY))
     // Saves from before the Star Shop existed get empty rewards.
-    if (saved?.tasks) return withNewBadges(startNewDayIfNeeded({ ...starterRewards(saved.stars ?? 0), ...saved }))
+    if (saved?.tasks) return withNewBadges(startNewDayIfNeeded({ plan: null, ...starterRewards(saved.stars ?? 0), ...saved }))
   } catch {
     // Storage blocked or corrupt: fall through to a fresh start.
   }
@@ -99,22 +128,22 @@ function reducer(state, action) {
       }
       return withNewBadges({ ...state, tasks, stars: state.stars - item.price, owned: [...state.owned, item.id] })
     }
+    // add and remove take `when`: 'today' (default) or 'tomorrow'.
     case 'add':
-      return {
-        ...state,
-        tasks: {
-          ...state.tasks,
-          [action.period]: [...state.tasks[action.period], { id: makeId(), text: action.text, done: false }],
-        },
-      }
+      return updateList(state, action.when, action.period, (list) => [
+        ...list,
+        { id: makeId(), text: action.text, done: false },
+      ])
     case 'remove':
-      return {
-        ...state,
-        tasks: {
-          ...state.tasks,
-          [action.period]: state.tasks[action.period].filter((t) => t.id !== action.id),
-        },
-      }
+      return updateList(state, action.when, action.period, (list) => list.filter((t) => t.id !== action.id))
+    // Copies today's tasks with these ids into tomorrow, skipping ones already planned.
+    case 'copyToTomorrow': {
+      const planned = new Set(tomorrowLists(state)[action.period].map((t) => t.text.toLowerCase()))
+      const copies = state.tasks[action.period]
+        .filter((t) => action.ids.includes(t.id) && !planned.has(t.text.toLowerCase()))
+        .map((t) => ({ id: makeId(), text: t.text, done: false }))
+      return updateList(state, 'tomorrow', action.period, (list) => [...list, ...copies])
+    }
     case 'newDay':
       return startNewDayIfNeeded(state)
     default:

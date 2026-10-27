@@ -25,7 +25,7 @@ export default function StarBoard({ screen, state, onSelect, onBack, onBuy }) {
 
   const intro = {
     shop: `You have ${state.stars} ${state.stars === 1 ? 'star' : 'stars'}. What do you want to get?`,
-    stickers: 'Your sticker book',
+    stickers: 'Your sticker collection',
     badges: 'Badges you earn by doing your tasks',
   }[screen]
 
@@ -41,11 +41,12 @@ export default function StarBoard({ screen, state, onSelect, onBack, onBuy }) {
   return (
     <>
       <div className="star-intro">
-        <button type="button" className="back-button" onClick={onBack}>
+        <p className={`star-intro__text star-intro__text--${screen}`}>{intro}</p>
+        {/* Same look as the Today/Tomorrow "Day switch" */}
+        <button type="button" className="day-switch" onClick={onBack}>
           <img src={backArrow} alt="" width="28" height="28" />
-          My Day
+          My day
         </button>
-        <p className="star-intro__text">{intro}</p>
       </div>
 
       <section className="board" aria-label="Stars">

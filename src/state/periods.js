@@ -12,7 +12,7 @@ export const PERIODS = [
 export const STARTER_TASKS = {
   morning: ['Make bed', 'Change clothes', 'Eat breakfast', 'Put plates in dishwasher', 'Brush teeth', 'Go to school'],
   afternoon: ['Take shower', 'Lay the dining table', 'Help mom and dad in the kitchen', 'Eat dinner', 'Put plates to dishwasher', 'Wash hands'],
-  evening: ['Play with Ellinor', 'Read a book', 'Clean the whole room upstairs', 'Brush teeth', 'Prepare clothes for the next day', 'Go to bed'],
+  evening: ['Play with little sister', 'Read a book', 'Clean the whole room upstairs', 'Brush teeth', 'Prepare clothes for the next day', 'Go to bed'],
 }
 
 export function periodForHour(hour) {

@@ -2,7 +2,8 @@ import { useState } from 'react'
 import plusIcon from '../assets/plus.svg'
 import clipboardIcon from '../assets/clipboard.svg'
 
-export default function AddTaskRow({ periodLabel, onAdd }) {
+// aside: optional content shown at the end of the row (e.g. the Copy from today button).
+export default function AddTaskRow({ periodLabel, onAdd, aside }) {
   const [editing, setEditing] = useState(false)
   const [text, setText] = useState('')
 
@@ -21,7 +22,7 @@ export default function AddTaskRow({ periodLabel, onAdd }) {
 
   if (!editing) {
     return (
-      <li className="add-row">
+      <li className="add-row add-row--closed">
         <button type="button" className="add-row__open" onClick={() => setEditing(true)}>
           <img src={plusIcon} alt="" width="36" height="36" />
           <span>Add task</span>
@@ -29,6 +30,7 @@ export default function AddTaskRow({ periodLabel, onAdd }) {
             <img src={clipboardIcon} alt="" width="22.5" height="31.5" />
           </span>
         </button>
+        {aside}
       </li>
     )
   }
