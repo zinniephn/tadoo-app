@@ -1,0 +1,84 @@
+:root {
+  /* Colors from the Figma file */
+  --bg: #fafff2;
+  --text: #000;
+  --brand-green: #2caf00;
+  --celebrate-green: #008d18;
+  --celebrate-bg: #deffd3;
+  --account-red: #ff5151;
+  --add-blue: #371dff;
+  --remove-red: #d13617;
+  --checkbox-bg: #fffeef;
+  --star-number: #585555;
+
+  --font-heading: 'Fredoka', 'Nunito', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+
+  /* Big, readable text that shrinks a little on small screens */
+  --text-task: clamp(22px, 2.6vw + 8px, 32px);
+  --text-greeting: clamp(18px, 1.2vw + 10px, 24px);
+  --icon: 36px;
+  --gutter: clamp(16px, 4vw, 32px);
+
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+:focus-visible {
+  outline: 4px solid var(--add-blue);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+img {
+  display: block;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

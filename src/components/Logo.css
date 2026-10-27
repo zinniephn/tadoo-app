@@ -1,0 +1,43 @@
+.logo {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* Badge positions are the Figma offsets divided by the font size */
+.logo__badge {
+  position: absolute;
+  left: 2.25em;
+  top: 0.5em;
+  width: 0.4375em;
+  height: 0.4375em;
+}
+
+.logo__circle {
+  width: 100%;
+  height: 100%;
+}
+
+.logo__check {
+  position: absolute;
+  left: 0.102em;
+  top: 0.133em;
+  width: 0.266em;
+  height: 0.1875em;
+}
+
+.logo--small .logo__badge {
+  width: 0.45em;
+  height: 0.45em;
+}
+
+.logo--small .logo__check {
+  left: 0.109em;
+  top: 0.135em;
+  width: 0.252em;
+  height: 0.176em;
+}
