@@ -7,10 +7,10 @@ import padlockIcon from '../assets/padlock.svg'
 export default function TaskRow({ task, future = false, onToggle, onRemove }) {
   const locked = task.locked || future
   return (
-    <li className={`task-row ${task.done ? 'task-row--done' : ''} ${locked ? 'task-row--locked' : ''}`}>
+    <li className="flex items-center justify-between gap-4 px-[22px] border-b border-(--divider) max-[700px]:px-3.5">
       <button
         type="button"
-        className="task-row__toggle"
+        className={`group flex-1 min-w-0 min-h-14 flex items-center gap-4 text-left font-heading text-task leading-[1.2] ${locked ? 'cursor-default' : ''}`}
         onClick={locked ? undefined : onToggle}
         aria-pressed={task.done}
         aria-disabled={locked || undefined}
@@ -19,17 +19,23 @@ export default function TaskRow({ task, future = false, onToggle, onRemove }) {
         }
       >
         {task.done ? (
-          <img className="task-row__checked" src={checkedIcon} alt="" width="34" height="34" />
+          <img className="shrink-0 m-px animate-pop-in" src={checkedIcon} alt="" width="34" height="34" />
         ) : future ? (
           // Figma "Checkbox/Locked"
-          <span className="task-row__box task-row__box--future" aria-hidden="true">
+          <span
+            className="shrink-0 size-9 rounded-md grid place-items-center border-2 border-dashed border-[#d9d6cc] bg-[#f1f0ea]"
+            aria-hidden="true"
+          >
             <img src={padlockIcon} alt="" width="18" height="20" />
           </span>
         ) : (
-          <span className="task-row__box" aria-hidden="true" />
+          <span
+            className={`shrink-0 size-9 rounded-md bg-checkbox-bg transition ${locked ? '' : 'group-hover:shadow-[inset_0_0_0_3px_var(--divider)] group-active:scale-90'}`}
+            aria-hidden="true"
+          />
         )}
-        <span className="task-row__text">{task.text}</span>
-        <span className="visually-hidden">
+        <span className="wrap-anywhere">{task.text}</span>
+        <span className="sr-only">
           {task.done ? ', done!' : ''}
           {task.locked ? ' Star used in the Star Shop.' : ''}
           {future ? ', can be checked tomorrow' : ''}
@@ -37,9 +43,14 @@ export default function TaskRow({ task, future = false, onToggle, onRemove }) {
       </button>
 
       {task.done ? (
-        <img className="task-row__star" src={starIcon} alt="" width="36" height="36" />
+        <img className="shrink-0 animate-star-pop" src={starIcon} alt="" width="36" height="36" />
       ) : (
-        <button type="button" className="task-row__remove" onClick={onRemove} aria-label={`Remove ${task.text}`}>
+        <button
+          type="button"
+          className="shrink-0 grid place-items-center size-14 -mr-2.5 rounded-full transition-transform hover:scale-110"
+          onClick={onRemove}
+          aria-label={`Remove ${task.text}`}
+        >
           <img src={minusIcon} alt="" width="36" height="36" />
         </button>
       )}

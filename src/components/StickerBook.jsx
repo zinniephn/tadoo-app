@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { SHOP_ITEMS, STICKER_PAGES } from '../state/rewards'
 import StickerArt from './StickerArt'
+import { RewardCard, RewardCircle, RewardName, StarGrid } from './ui'
 
 // Figma "My Stickers": one page of the book at a time, with page tabs at the bottom.
 export default function StickerBook({ owned }) {
@@ -10,39 +11,39 @@ export default function StickerBook({ owned }) {
 
   return (
     <>
-      <div className="book-header">
-        <h2 className="book-header__title">{page.label}</h2>
-        <p className="book-header__count">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+        <h2 className="font-heading font-medium text-[32px] text-[#72243e]">{page.label}</h2>
+        <p className="font-body font-semibold text-[24px] text-[#993556]">
           {collected} of {page.items.length} collected
         </p>
       </div>
 
-      <ul className="star-grid">
+      <StarGrid>
         {page.items.map((id) =>
           owned.includes(id) ? (
-            <li key={id} className="reward-card">
+            <RewardCard key={id}>
               <StickerArt id={id} box={[106, 94]} />
-              <p className="reward-card__name">{SHOP_ITEMS.find((i) => i.id === id).name}</p>
-            </li>
+              <RewardName>{SHOP_ITEMS.find((i) => i.id === id).name}</RewardName>
+            </RewardCard>
           ) : (
-            <li key={id} className="reward-card reward-card--empty-sticker">
-              <span className="reward-card__circle" aria-hidden="true">
+            <RewardCard key={id} look="empty">
+              <RewardCircle look="empty" aria-hidden="true">
                 ?
-              </span>
-              <p className="reward-card__name">
-                ???<span className="visually-hidden"> Not collected yet</span>
-              </p>
-            </li>
+              </RewardCircle>
+              <RewardName>
+                ???<span className="sr-only"> Not collected yet</span>
+              </RewardName>
+            </RewardCard>
           ),
         )}
-      </ul>
+      </StarGrid>
 
-      <div className="book-pages" aria-label="Sticker pages">
+      <div className="flex flex-wrap justify-center gap-3" aria-label="Sticker pages">
         {STICKER_PAGES.map((p) => (
           <button
             key={p.id}
             type="button"
-            className={`book-pages__tab ${p.id === pageId ? 'book-pages__tab--active' : ''}`}
+            className={`py-2.5 px-6 rounded-3xl font-heading font-medium text-[24px] text-[#72243e] ${p.id === pageId ? 'bg-white' : 'bg-[#f8dce7]'}`}
             aria-pressed={p.id === pageId}
             onClick={() => setPageId(p.id)}
           >

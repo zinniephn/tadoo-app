@@ -5,7 +5,7 @@ import partyIcon from '../assets/modal-party.svg'
 import greatJobStar from '../assets/modal-star.svg'
 import wellDoneStar from '../assets/modal-star-2.svg'
 import dayStar from '../assets/modal-star-day.svg'
-import './CelebrationModal.css'
+import { Backdrop } from './ui'
 
 // The section variants of the Figma "Modal-tadoo" component, each with its own star size.
 const CHEERS = [
@@ -46,36 +46,39 @@ export default function CelebrationModal({ name, periodLabel, starsEarned, whole
   const stars = starsEarned === 1 ? 'star' : 'stars'
 
   return (
-    <div className="celebration" onClick={onClose}>
+    <Backdrop onClick={onClose}>
       <div
-        className={`celebration__card ${wholeDay ? 'celebration__card--day' : ''}`}
+        className={`flex flex-col items-center gap-5 rounded-[49px] bg-celebrate-bg shadow-[10px_10px_4px_0_rgb(188_184_184/0.25)] text-celebrate-green font-heading animate-card-in ${wholeDay ? 'w-[min(556px,100%)] py-9 px-[clamp(24px,6vw,48px)]' : 'w-[min(546px,100%)] py-[clamp(36px,8vw,66px)] px-[clamp(24px,6vw,67px)]'}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="celebration-title"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="celebration__logo-row">
-          <Logo as="p" size={40} color="var(--celebrate-green)" variant="small" />
-          <img src={partyIcon} alt="" width="31.5" height="30.4" />
+        {/* Logo with the party popper beside it; the popper sits in a 36px slot as in Figma. */}
+        <div className="flex items-start gap-2">
+          <Logo as="p" size={40} className="text-celebrate-green" variant="small" />
+          <img className="mt-[6.4px] mr-[2.2px] ml-[2.3px] animate-wiggle" src={partyIcon} alt="" width="31.5" height="30.4" />
         </div>
 
         {wholeDay ? (
           <>
-            <p id="celebration-title" className="celebration__message">
+            <p id="celebration-title" className="w-full text-left text-modal leading-[1.2]">
               You did it {name}! You have checked out all the tasks today and earned {starsEarned} {stars}
-              <img className="celebration__star" src={dayStar} alt="" width="36" height="33" />! Do you want
+              <img className="inline-block align-[-0.12em]" src={dayStar} alt="" width="36" height="33" />! Do you want
               to get a sticker from the star shop?
             </p>
-            <button ref={focusTarget} type="button" className="celebration__shop" onClick={onShop}>
+            <button ref={focusTarget} type="button" className="min-w-[200px] h-16 px-8 rounded-[32px] bg-brand-green text-white font-heading font-semibold text-[28px] transition-transform hover:scale-105" onClick={onShop}>
               To star shop
             </button>
           </>
         ) : (
-          <p id="celebration-title" className="celebration__message">
+          <p id="celebration-title" className="w-full text-left text-modal leading-[1.2]">
             {cheer.text} {name}! All {periodLabel.toLowerCase()} tasks are checked!!!
             <br />
             You’ve earned {starsEarned} {stars}
-            <img className="celebration__star" src={cheer.star} alt="" width={cheer.width} height={cheer.height} />
+            <img
+              className="inline-block ml-[0.3em] align-[-0.12em]"
+              src={cheer.star} alt="" width={cheer.width} height={cheer.height} />
           </p>
         )}
 
@@ -83,12 +86,12 @@ export default function CelebrationModal({ name, periodLabel, starsEarned, whole
         <button
           ref={wholeDay ? undefined : focusTarget}
           type="button"
-          className="celebration__close visually-hidden"
+          className="sr-only"
           onClick={onClose}
         >
           Close
         </button>
       </div>
-    </div>
+    </Backdrop>
   )
 }

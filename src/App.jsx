@@ -8,7 +8,6 @@ import CelebrationModal from './components/CelebrationModal'
 import AccountDrawer from './components/AccountDrawer'
 import StarBoard from './components/StarBoard'
 import CopyPanel from './components/CopyPanel'
-import './App.css'
 
 export default function App() {
   const [state, dispatch] = useTadoo()
@@ -55,7 +54,7 @@ export default function App() {
   }
 
   return (
-    <div className="app">
+    <div className="mx-auto max-w-[calc(1170px_+_2_*_var(--spacing-gutter))] pt-[45px] px-gutter pb-16 max-[600px]:pt-6">
       <Header
         name={state.name}
         stars={state.stars}

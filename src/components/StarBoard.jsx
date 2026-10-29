@@ -8,8 +8,7 @@ import backArrow from '../assets/back-arrow.svg'
 import shopIcon from '../assets/tab-shop.svg'
 import stickersIcon from '../assets/tab-stickers.svg'
 import badgesIcon from '../assets/tab-badges.svg'
-import './TaskBoard.css'
-import './StarBoard.css'
+import { BoardTab, BoardTabs, DaySwitch } from './ui'
 
 // The three star screens from Figma, shown as tabs on one board like the day's tasks.
 const STAR_TABS = [
@@ -40,44 +39,40 @@ export default function StarBoard({ screen, state, onSelect, onBack, onBuy }) {
 
   return (
     <>
-      <div className="star-intro">
-        <p className={`star-intro__text star-intro__text--${screen}`}>{intro}</p>
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 mt-[45px]">
+        <p
+          className={`font-body font-semibold ${screen === 'stickers' ? 'text-[length:clamp(20px,1.5vw_+_12px,28px)]' : 'text-greeting'}`}
+        >
+          {intro}
+        </p>
         {/* Same look as the Today/Tomorrow "Day switch" */}
-        <button type="button" className="day-switch" onClick={onBack}>
+        <DaySwitch onClick={onBack}>
           <img src={backArrow} alt="" width="28" height="28" />
           My day
-        </button>
+        </DaySwitch>
       </div>
 
-      <section className="board" aria-label="Stars">
-        <div className="board__tabs" role="tablist" aria-label="Stars" onKeyDown={handleTabKeys}>
-          {STAR_TABS.map((t) => {
-            const selected = t.id === screen
-            return (
-              <button
-                key={t.id}
-                id={`tab-${t.id}`}
-                type="button"
-                role="tab"
-                aria-selected={selected}
-                aria-controls="star-panel"
-                tabIndex={selected ? 0 : -1}
-                className={`board__tab ${selected ? 'board__tab--active' : ''}`}
-                style={{ '--tab-color': t.color }}
-                onClick={() => onSelect(t.id)}
-              >
-                <img src={t.icon} alt="" width="36" height="36" />
-                <span className="board__tab-label">{t.label}</span>
-              </button>
-            )
-          })}
-        </div>
+      <section className="mt-[30px]" aria-label="Stars">
+        <BoardTabs aria-label="Stars" onKeyDown={handleTabKeys}>
+          {STAR_TABS.map((t) => (
+            <BoardTab
+              key={t.id}
+              id={`tab-${t.id}`}
+              aria-controls="star-panel"
+              selected={t.id === screen}
+              color={t.color}
+              icon={t.icon}
+              label={t.label}
+              onClick={() => onSelect(t.id)}
+            />
+          ))}
+        </BoardTabs>
 
         <div
           id="star-panel"
           role="tabpanel"
           aria-labelledby={`tab-${screen}`}
-          className="star-panel"
+          className="flex flex-col gap-6 p-8 max-[600px]:gap-4 max-[600px]:p-4"
           style={{ background: tab.color }}
         >
           {screen === 'shop' && <StarShop stars={state.stars} owned={state.owned} onGet={setBuying} />}

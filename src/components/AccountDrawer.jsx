@@ -8,7 +8,6 @@ import shopIcon from '../assets/icon-shop.svg'
 import stickersIcon from '../assets/icon-stickers.svg'
 import badgesIcon from '../assets/icon-badges.svg'
 import accountIcon from '../assets/icon-account.svg'
-import './AccountDrawer.css'
 
 const LINKS = [
   { id: 'tasks', label: 'My daily tasks', icon: clipboardIcon, color: '#fff6d6' },
@@ -19,12 +18,19 @@ const LINKS = [
 
 function DrawerItem({ link, onClick }) {
   return (
-    <button type="button" className="drawer-item" style={{ background: link.color }} onClick={onClick}>
-      <span className="drawer-item__icon">
-        <img src={link.icon} alt="" />
+    <button
+      type="button"
+      className="flex items-center gap-4 w-full min-h-22 pr-5 pl-6 rounded-3xl text-left transition-transform hover:scale-102 active:scale-98 max-[480px]:min-h-18"
+      style={{ background: link.color }}
+      onClick={onClick}
+    >
+      <span className="grid place-items-center shrink-0 size-9">
+        <img className="shrink-0" src={link.icon} alt="" />
       </span>
-      <span className="drawer-item__label">{link.label}</span>
-      <img src={chevronIcon} alt="" width="28" height="28" />
+      <span className="flex-1 min-w-0 font-heading font-medium text-[30px] text-black max-[480px]:text-[24px]">
+        {link.label}
+      </span>
+      <img className="shrink-0" src={chevronIcon} alt="" width="28" height="28" />
     </button>
   )
 }
@@ -42,39 +48,45 @@ export default function AccountDrawer({ name, stars, onClose, onGo, onEditName }
   }, [onClose])
 
   return (
-    <div className="drawer-backdrop" onClick={onClose}>
+    <div className="fixed inset-0 z-900 flex justify-end bg-backdrop animate-fade-in" onClick={onClose}>
       <nav
-        className="drawer"
+        className="flex flex-col gap-5 w-[min(420px,100%)] h-full overflow-y-auto pt-7 px-6 pb-10 rounded-l-[40px] bg-background drop-shadow-[-8px_0_12px_rgb(0_0_0/0.15)] animate-drawer-in max-[480px]:gap-4 max-[480px]:pt-5 max-[480px]:px-4 max-[480px]:pb-8"
         role="dialog"
         aria-modal="true"
         aria-label="Menu"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="drawer__close-row">
-          <button ref={closeButton} type="button" className="drawer__close" onClick={onClose} aria-label="Close menu">
+        <div className="flex justify-end">
+          <button
+            ref={closeButton}
+            type="button"
+            className="grid place-items-center size-16 border border-line rounded-[32px] bg-white transition-transform hover:scale-105"
+            onClick={onClose}
+            aria-label="Close menu"
+          >
             <img src={closeIcon} alt="" width="28" height="28" />
           </button>
         </div>
 
-        <div className="drawer__profile">
-          <div className="drawer__avatar">
+        <div className="flex flex-col items-center gap-2 pb-3">
+          <div className="grid place-items-center size-32 rounded-[64px] bg-[#ffe3c2]">
             <img src={owlAvatar} alt="" width="92" height="95" />
           </div>
-          <p className="drawer__name">{name}</p>
-          <p className="drawer__stars">
+          <p className="max-w-full truncate font-heading font-semibold text-[36px]">{name}</p>
+          <p className="flex items-center gap-2 font-heading font-medium text-[28px] text-star-number">
             <img src={starIcon} alt="" width="36" height="36" />
             {stars} {stars === 1 ? 'star' : 'stars'}
           </p>
         </div>
 
-        <p className="drawer__heading">Go to</p>
-        <div className="drawer__links">
+        <p className="font-body font-semibold text-[22px] text-muted">Go to</p>
+        <div className="flex flex-col gap-3">
           {LINKS.map((link) => (
             <DrawerItem key={link.id} link={link} onClick={() => onGo(link.id)} />
           ))}
         </div>
 
-        <hr className="drawer__divider" />
+        <hr className="w-full h-0.5 border-0 rounded-[1px] bg-line" />
         <DrawerItem
           link={{ id: 'account', label: 'My Account', icon: accountIcon, color: '#e7fbff' }}
           onClick={onEditName}

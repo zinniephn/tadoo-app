@@ -22,7 +22,6 @@ import ufo5 from '../assets/art/ufo-5.svg'
 import ufo6 from '../assets/art/ufo-6.svg'
 import ufo7 from '../assets/art/ufo-7.svg'
 import ufo8 from '../assets/art/ufo-8.svg'
-import './StickerArt.css'
 
 // Sticker art from the Figma components, at their native size.
 // Layered art keeps Figma's layer boxes: `inset` places a layer, `pad` is the image's
@@ -98,11 +97,11 @@ const ART = {
 }
 
 function Layer({ src, color, outline, pad }) {
-  if (outline) return <span className="art__outline" />
-  if (color) return <span className="art__fill" style={{ background: color }} />
+  if (outline) return <span className="absolute inset-0 border-2 border-[#006fff] rounded-2xl" />
+  if (color) return <span className="absolute inset-0" style={{ background: color }} />
   return (
-    <span className="art__fill" style={pad ? { inset: pad } : undefined}>
-      <img src={src} alt="" />
+    <span className="absolute inset-0" style={pad ? { inset: pad } : undefined}>
+      <img className="block size-full" src={src} alt="" />
     </span>
   )
 }
@@ -112,20 +111,25 @@ export default function StickerArt({ id, box }) {
   const art = ART[id]
   const scale = Math.min(1, box[0] / art.width, box[1] / art.height)
   return (
-    <span className="art" style={{ width: art.width * scale, height: art.height * scale }}>
+    <span className="relative block shrink-0" style={{ width: art.width * scale, height: art.height * scale }}>
       <span
-        className={`art__canvas ${art.clip ? 'art__canvas--clip' : ''}`}
+        className={`absolute top-0 left-0 origin-top-left ${art.clip ? 'overflow-hidden' : ''}`}
         style={{ width: art.width, height: art.height, transform: `scale(${scale})` }}
       >
         {art.layers.map(({ inset = '0', turn, ...layer }, i) =>
+          // Rotated layers are sized from their box with container units, as Figma exports them.
           turn ? (
-            <span key={i} className="art__layer art__layer--turn" style={{ inset }}>
-              <span className="art__turned" style={{ width: turn[0], height: turn[1], rotate: turn[2] }}>
+            <span
+              key={i}
+              className="absolute flex items-center justify-center [container-type:size]"
+              style={{ inset }}
+            >
+              <span className="relative flex-none" style={{ width: turn[0], height: turn[1], rotate: turn[2] }}>
                 <Layer {...layer} />
               </span>
             </span>
           ) : (
-            <span key={i} className="art__layer" style={{ inset }}>
+            <span key={i} className="absolute" style={{ inset }}>
               <Layer {...layer} />
             </span>
           ),

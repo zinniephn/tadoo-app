@@ -3,8 +3,7 @@ import confetti from 'canvas-confetti'
 import Logo from './Logo'
 import StickerArt from './StickerArt'
 import confirmStar from '../assets/confirm-star.svg'
-import './CelebrationModal.css'
-import './ConfirmBuy.css'
+import { Backdrop, ModalButton } from './ui'
 
 // Figma "Confirm buy": asks before spending stars.
 export default function ConfirmBuy({ item, onYes, onNo }) {
@@ -30,31 +29,31 @@ export default function ConfirmBuy({ item, onYes, onNo }) {
   }, [onNo])
 
   return (
-    <div className="celebration" onClick={onNo}>
+    <Backdrop onClick={onNo}>
       <div
-        className="confirm-buy"
+        className="flex flex-col items-center gap-7 w-[min(557px,100%)] pt-[52px] px-[clamp(20px,5vw,56px)] pb-12 rounded-[49px] bg-celebrate-bg drop-shadow-[10px_10px_2px_rgb(188_184_184/0.25)] text-celebrate-green font-heading animate-card-in"
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirm-buy-question"
         onClick={(e) => e.stopPropagation()}
       >
-        <Logo as="p" size={40} color="var(--celebrate-green)" variant="small" />
-        <div className="confirm-buy__question">
+        <Logo as="p" size={40} className="text-celebrate-green" variant="small" />
+        <div className="flex items-center gap-2 max-[480px]:flex-col max-[480px]:text-center">
           <StickerArt id={item.id} box={[96, 96]} />
-          <p id="confirm-buy-question">
+          <p id="confirm-buy-question" className="text-modal">
             Get {item.name} for {item.price}
-            <img src={confirmStar} alt=" stars" width="40" height="40" />?
+            <img className="inline-block mx-2 align-[-6px]" src={confirmStar} alt=" stars" width="40" height="40" />?
           </p>
         </div>
-        <div className="confirm-buy__buttons">
-          <button ref={yesButton} type="button" className="confirm-buy__yes" onClick={buy}>
+        <div className="flex flex-wrap justify-center gap-4">
+          <ModalButton ref={yesButton} onClick={buy}>
             Yes!
-          </button>
-          <button type="button" className="confirm-buy__no" onClick={onNo}>
+          </ModalButton>
+          <ModalButton variant="no" onClick={onNo}>
             No
-          </button>
+          </ModalButton>
         </div>
       </div>
-    </div>
+    </Backdrop>
   )
 }
