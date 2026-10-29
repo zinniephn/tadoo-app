@@ -2,12 +2,16 @@ import { PERIODS } from '../state/periods'
 import TaskRow from './TaskRow'
 import AddTaskRow from './AddTaskRow'
 import copyIcon from '../assets/copy.svg'
-import './TaskBoard.css'
+import { BoardTab, BoardTabs } from './ui'
 
 // Figma "Copy from today": opens the panel for copying today's tasks into tomorrow.
 function CopyButton({ onClick }) {
   return (
-    <button type="button" className="copy-button" onClick={onClick}>
+    <button
+      type="button"
+      className="inline-flex items-center gap-2.5 py-2 pr-[22px] pl-4 border-2 border-add-blue rounded-[28px] bg-white text-add-blue font-heading font-medium text-[length:clamp(20px,1vw_+_14px,26px)] whitespace-nowrap transition-transform hover:scale-104"
+      onClick={onClick}
+    >
       <img src={copyIcon} alt="" width="28" height="28" />
       Copy from today
     </button>
@@ -30,45 +34,40 @@ export default function TaskBoard({ tasks, activePeriod, future = false, onSelec
   }
 
   return (
-    <section className="board" aria-label="My Tasks">
-      <div className="board__tabs" role="tablist" aria-label="Part of the day" onKeyDown={handleTabKeys}>
+    <section className="mt-[30px]" aria-label="My Tasks">
+      <BoardTabs aria-label="Part of the day" onKeyDown={handleTabKeys}>
         {PERIODS.map((p) => {
-          const selected = p.id === activePeriod
           const all = tasks[p.id]
           const allDone = all.length > 0 && all.every((t) => t.done)
           return (
-            <button
+            <BoardTab
               key={p.id}
               id={`tab-${p.id}`}
-              type="button"
-              role="tab"
-              aria-selected={selected}
               aria-controls="task-panel"
-              tabIndex={selected ? 0 : -1}
-              className={`board__tab ${selected ? 'board__tab--active' : ''}`}
-              style={{ '--tab-color': p.color }}
+              selected={p.id === activePeriod}
+              color={p.color}
+              icon={p.icon}
+              label={p.label}
               onClick={() => onSelectPeriod(p.id)}
             >
-              <img src={p.icon} alt="" width="36" height="36" />
-              <span className="board__tab-label">{p.label}</span>
-              {allDone && <span className="visually-hidden">, all done</span>}
-            </button>
+              {allDone && <span className="sr-only">, all done</span>}
+            </BoardTab>
           )
         })}
-      </div>
+      </BoardTabs>
 
       <div
         id="task-panel"
         role="tabpanel"
         aria-labelledby={`tab-${activePeriod}`}
-        className="board__panel"
+        className="bg-(--panel-color) py-5"
         style={{ '--panel-color': period.color, '--divider': period.divider }}
       >
-        <ul className="board__list">
+        <ul className="flex flex-col gap-5 max-[700px]:gap-2">
           {future && list.length === 0 && (
-            <li className="board__empty">
-              <p className="board__empty-title">Nothing planned for tomorrow {period.label.toLowerCase()} yet</p>
-              <p className="board__empty-text">
+            <li className="flex flex-col items-center gap-6 pt-10 px-[22px] pb-8 text-center">
+              <p className="font-heading font-medium text-task">Nothing planned for tomorrow {period.label.toLowerCase()} yet</p>
+              <p className="font-body font-semibold text-hint text-muted">
                 Copy tasks from today or add new ones.
                 <br />
                 If you don’t plan anything, tomorrow repeats today’s tasks.

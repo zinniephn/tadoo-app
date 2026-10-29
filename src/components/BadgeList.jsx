@@ -1,23 +1,26 @@
 import { BADGES } from '../state/rewards'
 import badgeStar from '../assets/badge-star.svg'
 import lockedStar from '../assets/badge-star-locked.svg'
+import { RewardCard, RewardCircle, RewardName, StarGrid } from './ui'
 
 // Figma "Badge": earned badges are white cards, locked ones dashed with their goal.
 export default function BadgeList({ earned }) {
   return (
-    <ul className="star-grid">
+    <StarGrid>
       {BADGES.map((badge) => {
         const isEarned = earned.includes(badge.id)
         return (
-          <li key={badge.id} className={`reward-card ${isEarned ? '' : 'reward-card--locked'}`}>
-            <span className="reward-card__circle">
+          <RewardCard key={badge.id} look={isEarned ? 'white' : 'locked'}>
+            <RewardCircle look={isEarned ? 'white' : 'locked'}>
               <img src={isEarned ? badgeStar : lockedStar} alt="" width="64" height="64" />
-            </span>
-            <p className="reward-card__name">{badge.name}</p>
-            <p className="reward-card__detail">{isEarned ? 'Earned!' : badge.goal}</p>
-          </li>
+            </RewardCircle>
+            <RewardName>{badge.name}</RewardName>
+            <p className="font-body font-semibold text-[22px] text-[#3b6d11] max-[600px]:text-[16px]">
+              {isEarned ? 'Earned!' : badge.goal}
+            </p>
+          </RewardCard>
         )
       })}
-    </ul>
+    </StarGrid>
   )
 }
