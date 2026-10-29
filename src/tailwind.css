@@ -1,0 +1,29 @@
+@import 'tailwindcss';
+
+/*
+  Tadoo! design tokens for Tailwind.
+  They point at the CSS variables in index.css, so a color changed there
+  updates both the existing CSS and the Tailwind classes
+  (e.g. bg-brand-green, text-add-blue, font-heading, text-task).
+*/
+@theme inline {
+  --color-bg: var(--bg);
+  --color-text: var(--text);
+  --color-brand-green: var(--brand-green);
+  --color-celebrate-green: var(--celebrate-green);
+  --color-celebrate-bg: var(--celebrate-bg);
+  --color-account-red: var(--account-red);
+  --color-add-blue: var(--add-blue);
+  --color-remove-red: var(--remove-red);
+  --color-checkbox-bg: var(--checkbox-bg);
+  --color-star-number: var(--star-number);
+
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
+
+  --text-task: var(--text-task);
+  --text-greeting: var(--text-greeting);
+
+  --spacing-icon: var(--icon);
+  --spacing-gutter: var(--gutter);
+}
